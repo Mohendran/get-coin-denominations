@@ -3,31 +3,27 @@
 // that returns only the total Coins needed
 let coinsNumber = {};
 
-function getCoinDenominations(denominations, amount) {
-  let totalCoins = 0;
+function getCoinDenominations(unSortedDenominations, amount) {
 
-  const hasValidInput = validateInput(denominations, amount);
+  const hasValidInput = validateInput(unSortedDenominations, amount);
 
-  if (hasValidInput) {
+  if (!hasValidInput) {
     return -1;
   }
 
   // Sort the Denominations in Descending order
-  denominations = denominations.sort().reverse();
+  denominations = unSortedDenominations.sort().reverse();
 
-  // reduce the amount with the denominations used
-  denominations.forEach(denomination => {
+  return denominations.reduce((totalCoins, denomination) => {
 
-    // Gets the Maximum coins that can be converted to this denominator
+   // Gets the Maximum coins that can be converted to this denominator
     const noOfCoinsForDenomination = parseInt(amount / denomination);
     if (noOfCoinsForDenomination) {
       coinsNumber[denomination] = noOfCoinsForDenomination;
       amount = amount % denomination;
-      totalCoins += noOfCoinsForDenomination; 
     }
-  });
-
-  return totalCoins || -1;
+    return totalCoins + noOfCoinsForDenomination;
+  }, 0) || -1;
 }
 
 function printOutput(totalCoins) {
@@ -43,16 +39,15 @@ function validateInput(denominations, amount) {
 
   if (denominations.length === 0) {
     console.log('Please provide Denomniations to give the amount');
-    return 0;
+    return false;
   }
 
   if (!amount) {
     console.log('Amount cannot be 0');
-    return 0;
+    return false;
   }
 
-  return 1;
-
+  return true;
 }
 
 const totalCoinsNeeded = getCoinDenominations([1, 5, 10], 7);
